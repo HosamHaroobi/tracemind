@@ -106,18 +106,20 @@ print(read_config_file('../../etc/passwd'))   # should be refused
 - Small local models occasionally call a tool with malformed arguments;
   the agent handles this gracefully (empty args → validation error →
   fed back to the model) rather than crashing.
-- The step limit (default 8) exists because a confused model can loop —
-  if you hit it, the printed step log shows exactly where reasoning
-  went wrong, which is itself useful for a portfolio writeup.
+- **Observed in testing:** the same goal, run twice, didn't always behave
+  identically. In one run, the model gathered the correct evidence (found
+  the ACL block in the VLAN config) but then kept pinging additional hosts
+  instead of concluding, hitting the step limit with no final answer. The
+  fix was making the system prompt explicit about *when* evidence counts
+  as sufficient ("stop once you find a config/log entry that directly
+  explains the problem") rather than leaving that judgment implicit. After
+  that change, repeated test runs consistently reached a correct
+  conclusion, though the model sometimes still probes for a couple of
+  nonexistent config filenames before settling — reasonable investigative
+  behavior, not a bug.
 - Traceroute can take 10-30 seconds per hop chain; be patient on slower
   connections. `gpt-oss:20b` on CPU-only hardware adds further latency
   per reasoning step (see hardware note above).
-- Observed in testing: the model can occasionally misstate the direction
-  of a ping/traceroute result in its final reasoning (e.g. describing
-  A→B connectivity when the test was actually B→A) even while reaching
-  the correct root-cause conclusion overall. Worth double-checking the
-  full reasoning chain, not just the final answer, for exactly this
-  reason.
 
 ## Tech stack
 
