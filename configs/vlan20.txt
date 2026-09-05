@@ -1,0 +1,6 @@
+VLAN 20 — Guest
+Subnet: 192.168.20.0/24
+Gateway: 192.168.20.1
+DHCP range: 192.168.20.50 - 192.168.20.150
+Inter-VLAN routing to VLAN 10: BLOCKED by ACL 101 (guest isolation policy)
+Trunk ports: Gi0/1, Gi0/2 (allowed VLANs 10,20,99)
